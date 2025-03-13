@@ -9,6 +9,10 @@ Apricot is an AI-powered desktop application for efficient note-taking, flashcar
 - **Interactive Quizzes**: Test your knowledge with AI-generated quizzes based on your notes
 - **Content Organization**: Structure your notes with AI assistance for improved readability
 
+## Demo
+
+![Demo GIF](assets/apricot.gif)
+
 ## Development Setup
 
 ### Prerequisites
