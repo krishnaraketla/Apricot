@@ -1,0 +1,191 @@
+.notes-page {
+  display: flex;
+  height: calc(100vh - 140px);
+  min-height: 500px;
+  padding: 1rem 0;
+}
+
+/* Loading state styles */
+.notes-page.loading {
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-message {
+  padding: 2rem;
+  background-color: var(--bg-medium);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--text-medium);
+  font-size: 1.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.notes-sidebar {
+  width: 300px;
+  border-right: 1px solid var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  padding-right: 1rem;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--bg-dark);
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-dark);
+}
+
+.new-note-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.new-note-btn:hover {
+  background-color: var(--color-primary-light);
+}
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.note-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.note-item:hover {
+  background-color: var(--bg-medium);
+}
+
+.note-item.selected {
+  background-color: var(--color-primary-lightest);
+  border-left: 3px solid var(--color-primary);
+}
+
+/* Pending state styling during transitions */
+.note-item.pending {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.note-item-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.note-item-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-item-preview {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-item-date {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.delete-note-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-note-btn:hover {
+  opacity: 1;
+}
+
+.notes-editor-container {
+  flex: 1;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.empty-notes-message,
+.empty-editor-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-light);
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--bg-medium);
+  border-radius: 8px;
+}
+
+.empty-notes-message p,
+.empty-editor-message p {
+  max-width: 300px;
+}
+
+.notes-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.organize-btn {
+  background-color: var(--color-secondary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.organize-btn:hover:not(:disabled) {
+  background-color: var(--color-secondary-light);
+}
+
+.organize-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+} 

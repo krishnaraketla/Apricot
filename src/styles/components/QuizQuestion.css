@@ -1,0 +1,127 @@
+.quiz-question {
+  background-color: var(--bg-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.question-text {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: var(--bg-medium);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.option:hover:not(.correct):not(.incorrect) {
+  background-color: var(--color-primary-lightest);
+  border-left: 4px solid var(--color-primary-light);
+}
+
+.option.selected {
+  background-color: var(--color-primary-lighter);
+  border-left: 4px solid var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-light);
+}
+
+.option.correct {
+  background-color: rgba(79, 138, 16, 0.2);
+  border-left: 4px solid var(--success);
+}
+
+.option.incorrect {
+  background-color: rgba(216, 0, 12, 0.1);
+  border-left: 4px solid var(--error);
+}
+
+.option-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-right: 1rem;
+  transition: all 0.2s;
+}
+
+.option:hover:not(.correct):not(.incorrect) .option-letter {
+  background-color: var(--color-primary);
+}
+
+.option.selected .option-letter {
+  background-color: var(--color-primary);
+  color: var(--text-dark);
+}
+
+.option.correct .option-letter {
+  background-color: var(--success);
+  color: white;
+}
+
+.option.incorrect .option-letter {
+  background-color: var(--error);
+  color: white;
+}
+
+.option-text {
+  font-size: 1rem;
+  flex: 1;
+}
+
+.submit-btn {
+  background-color: var(--color-secondary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: var(--color-secondary-light);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.correct-feedback {
+  background-color: rgba(79, 138, 16, 0.1);
+  color: var(--success);
+}
+
+.incorrect-feedback {
+  background-color: rgba(216, 0, 12, 0.1);
+  color: var(--error);
+} 

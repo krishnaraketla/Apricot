@@ -1,0 +1,91 @@
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--bg-light);
+  overflow: hidden;
+  height: 100%;
+  min-height: 500px;
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+  will-change: transform, opacity;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color-primary-lightest);
+  border-bottom: 1px solid var(--color-primary-lighter);
+}
+
+.note-title-input {
+  font-size: 1.5rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+  width: 100%;
+  padding: 0.5rem;
+  transition: border-bottom 0.2s ease;
+}
+
+.note-title-input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.note-content-area {
+  flex: 1;
+  padding: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  border: none;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  transition: background-color 0.3s ease;
+}
+
+.note-content-area:focus {
+  outline: none;
+}
+
+.note-editor-tools {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-medium);
+  border-top: 1px solid var(--bg-dark);
+}
+
+.tool-btn {
+  background-color: var(--color-primary);
+  color: var(--text-dark);
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tool-btn:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+} 
