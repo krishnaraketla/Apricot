@@ -7,7 +7,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="container navbar-container">
         <Link to="/" className="navbar-logo">
-          <span className="logo-text">Apricot</span>
+          <span className="logo-text">Walnut</span>
           <span className="logo-subtitle">Study Assistant</span>
         </Link>
         <ul className="navbar-links">

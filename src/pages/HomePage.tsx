@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
       <div className="app-header">
         <div className="app-title">
           <h1>Walnut</h1>
-          <p className="subtitle">Remeber Everything</p>
+          <p className="subtitle">Remember Everything</p>
         </div>
       </div>
       

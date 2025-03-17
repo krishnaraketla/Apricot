@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Apricot development script
-echo "Starting Apricot in development mode..."
+# Walnut development script
+echo "Starting Walnut in development mode..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then

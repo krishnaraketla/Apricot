@@ -96,13 +96,13 @@
 .action-icon svg {
   width: 3rem;
   height: 3rem;
-  color: #FF9966; /* Apricot color */
+  color: #FF9966; /* Walnut color */
 }
 
 .action-card:nth-child(1) .action-icon svg,
 .action-card:nth-child(2) .action-icon svg,
 .action-card:nth-child(3) .action-icon svg {
-  color: #FF9966; /* Apricot color */
+  color: #FF9966; /* Walnut color */
 }
 
 .action-label {

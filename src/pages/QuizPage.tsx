@@ -32,13 +32,13 @@ const QuizPage: React.FC = () => {
     const fetchData = async () => {
       try {
         // Load notes from storage
-        const savedNotes = await loadData('apricot-notes');
+        const savedNotes = await loadData('walnut-notes');
         if (savedNotes) {
           setNotes(savedNotes);
         }
 
         // Load quiz questions from storage
-        const savedQuizQuestions = await loadData('apricot-quiz-questions');
+        const savedQuizQuestions = await loadData('walnut-quiz-questions');
         if (savedQuizQuestions) {
           setQuizQuestions(savedQuizQuestions);
         }
@@ -85,7 +85,7 @@ const QuizPage: React.FC = () => {
       setQuizQuestions(newQuizQuestions);
       setScore(0);
       setTotalAnswered(0);
-      await saveData('apricot-quiz-questions', newQuizQuestions);
+      await saveData('walnut-quiz-questions', newQuizQuestions);
     } catch (error) {
       console.error('Error generating quiz questions:', error);
     } finally {

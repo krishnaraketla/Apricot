@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Apricot build script
-echo "Building Apricot for distribution..."
+# Walnut build script
+echo "Building Walnut for distribution..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then

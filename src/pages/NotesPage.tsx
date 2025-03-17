@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useTransition, useRef } from '
 import NoteEditor from '../components/NoteEditor';
 import PerplexityService from '../services/PerplexityService';
 import useElectron from '../hooks/useElectron';
+import useScrollContainment from '../hooks/useScrollContainment';
 import '../styles/pages/NotesPage.css';
 
 interface Note {
@@ -18,14 +19,18 @@ const NotesPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
   const { saveData, loadData } = useElectron();
-  const latestNoteRef = useRef<HTMLDivElement>(null);
+  const noteRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
+  const notesListRef = useRef<HTMLDivElement>(null);
+  
+  // Use the scroll containment hook to prevent scroll events from propagating
+  useScrollContainment(notesListRef);
 
   useEffect(() => {
     // Load notes from storage on component mount
     const fetchNotes = async () => {
       setIsLoading(true);
       try {
-        const savedNotes = await loadData('apricot-notes');
+        const savedNotes = await loadData('walnut-notes');
         if (savedNotes && Array.isArray(savedNotes)) {
           // Ensure dates are properly parsed from JSON
           const parsedNotes = savedNotes.map((note: any) => ({
@@ -82,7 +87,7 @@ const NotesPage: React.FC = () => {
       
       setNotes(updatedNotes);
       setSelectedNote(updatedNote);
-      await saveData('apricot-notes', updatedNotes);
+      await saveData('walnut-notes', updatedNotes);
     } else {
       // Create new note
       const newNote: Note = {
@@ -97,7 +102,7 @@ const NotesPage: React.FC = () => {
       const newNotes = [newNote, ...notes];
       setNotes(newNotes);
       setSelectedNote(newNote);
-      await saveData('apricot-notes', newNotes);
+      await saveData('walnut-notes', newNotes);
     }
   }, [notes, selectedNote, saveData]);
 
@@ -113,7 +118,15 @@ const NotesPage: React.FC = () => {
     const newNotes = [newNote, ...notes];
     setNotes(newNotes);
     setSelectedNote(newNote);
-    saveData('apricot-notes', newNotes);
+    saveData('walnut-notes', newNotes);
+    
+    // Allow a brief delay for the DOM to update before scrolling
+    setTimeout(() => {
+      if (notesListRef.current && noteRefs.current[newNote.id]) {
+        // Smoothly scroll to the new note at the top
+        noteRefs.current[newNote.id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
   }, [notes, saveData]);
 
   const handleNoteSelect = useCallback((note: Note) => {
@@ -130,7 +143,7 @@ const NotesPage: React.FC = () => {
       setSelectedNote(updatedNotes.length > 0 ? updatedNotes[0] : null);
     }
     
-    await saveData('apricot-notes', updatedNotes);
+    await saveData('walnut-notes', updatedNotes);
   }, [notes, selectedNote, saveData]);
 
   const handleCreateFlashcards = useCallback(async () => {
@@ -148,12 +161,12 @@ const NotesPage: React.FC = () => {
     });
   }, []);
 
-  // Focus on the latest note when it changes
+  // Only focus on first note when notes list first loads, not on every selection change
   useEffect(() => {
-    if (latestNoteRef.current) {
-      latestNoteRef.current.focus();
+    if (notes.length > 0 && !selectedNote) {
+      setSelectedNote(notes[0]);
     }
-  }, [selectedNote]);
+  }, [notes, selectedNote]);
 
   if (isLoading) {
     return (
@@ -177,19 +190,19 @@ const NotesPage: React.FC = () => {
             + New Note
           </button>
         </div>
-        <div className="notes-list">
+        <div className="notes-list" ref={notesListRef}>
           {notes.length === 0 ? (
             <div className="empty-notes-message">
               <p>You don't have any notes yet. Create one to get started!</p>
             </div>
           ) : (
-            notes.map((note, index) => {
+            notes.map((note) => {
               const isSelected = selectedNote && selectedNote.id === note.id;
               
               return (
                 <div
                   key={note.id}
-                  ref={index === 0 ? latestNoteRef : null}
+                  ref={(el) => noteRefs.current[note.id] = el}
                   className={`note-item ${isSelected ? 'selected' : ''}`}
                   onClick={() => handleNoteSelect(note)}
                   tabIndex={0}

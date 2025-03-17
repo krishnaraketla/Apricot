@@ -1,5 +1,5 @@
 {
-  "name": "apricot",
+  "name": "walnut",
   "version": "1.0.0",
   "description": "A simple intuitive studying/note taking app",
   "main": "main.js",
@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
-    "appId": "com.apricot.app",
-    "productName": "Apricot",
+    "appId": "com.walnut.app",
+    "productName": "Walnut",
     "files": [
       "dist/**/*",
       "main.js",

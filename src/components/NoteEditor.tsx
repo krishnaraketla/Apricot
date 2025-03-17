@@ -20,6 +20,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const hasFocusRef = useRef<boolean>(false);
   
   // Track component instance with an instance ID for debugging
   const instanceId = useMemo(() => Math.random().toString(36).substring(2, 9), []);
@@ -64,6 +66,28 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
     setTitle(initialTitle);
   }, [initialTitle, instanceId]);
 
+  // Track focus state of the textarea
+  useEffect(() => {
+    const handleFocus = () => {
+      hasFocusRef.current = true;
+    };
+    
+    const handleBlur = () => {
+      hasFocusRef.current = false;
+    };
+    
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.addEventListener('focus', handleFocus);
+      textarea.addEventListener('blur', handleBlur);
+      
+      return () => {
+        textarea.removeEventListener('focus', handleFocus);
+        textarea.removeEventListener('blur', handleBlur);
+      };
+    }
+  }, []);
+
   const autoSave = useCallback((newContent: string, newTitle: string) => {
     if (saveTimeout) {
       clearTimeout(saveTimeout);
@@ -72,7 +96,27 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
     const timeout = setTimeout(() => {
       console.log(`[NoteEditor ${instanceId}] Auto-saving content:`, newContent?.substring(0, 20));
       console.log(`[NoteEditor ${instanceId}] Auto-saving title:`, newTitle);
+      
+      // Store the current cursor position
+      const selectionStart = textareaRef.current?.selectionStart;
+      const selectionEnd = textareaRef.current?.selectionEnd;
+      const wasFocused = hasFocusRef.current;
+      
+      // Save the note
       onSave(newContent, newTitle);
+      
+      // In the next tick, restore focus and cursor position if it was focused before
+      if (wasFocused) {
+        requestAnimationFrame(() => {
+          if (textareaRef.current) {
+            textareaRef.current.focus();
+            if (selectionStart !== undefined && selectionEnd !== undefined) {
+              textareaRef.current.selectionStart = selectionStart;
+              textareaRef.current.selectionEnd = selectionEnd;
+            }
+          }
+        });
+      }
     }, 1000);
     
     setSaveTimeout(timeout);
@@ -138,6 +182,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
         </div>
       </div>
       <textarea 
+        ref={textareaRef}
         className="note-content-area"
         value={content}
         onChange={handleContentChange}

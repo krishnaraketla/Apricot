@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <Link to="/" className="sidebar-logo">
-          <h2>{collapsed ? 'A' : 'Apricot'}</h2>
+          <h2 className="app-name">Walnut</h2>
         </Link>
         <button 
           className="sidebar-toggle" 

@@ -30,13 +30,13 @@ const FlashcardsPage: React.FC = () => {
     const fetchData = async () => {
       try {
         // Load notes from storage
-        const savedNotes = await loadData('apricot-notes');
+        const savedNotes = await loadData('walnut-notes');
         if (savedNotes) {
           setNotes(savedNotes);
         }
 
         // Load flashcards from storage
-        const savedFlashcards = await loadData('apricot-flashcards');
+        const savedFlashcards = await loadData('walnut-flashcards');
         if (savedFlashcards) {
           setFlashcards(savedFlashcards);
         }
@@ -82,7 +82,7 @@ const FlashcardsPage: React.FC = () => {
       
       const updatedFlashcards = [...flashcards, ...newFlashcards];
       setFlashcards(updatedFlashcards);
-      await saveData('apricot-flashcards', updatedFlashcards);
+      await saveData('walnut-flashcards', updatedFlashcards);
     } catch (error) {
       console.error('Error generating flashcards:', error);
       setError(error instanceof Error ? error.message : 'Failed to generate flashcards. Please try again.');
@@ -94,7 +94,7 @@ const FlashcardsPage: React.FC = () => {
   const handleDeleteFlashcard = async (id: string) => {
     const updatedFlashcards = flashcards.filter(card => card.id !== id);
     setFlashcards(updatedFlashcards);
-    await saveData('apricot-flashcards', updatedFlashcards);
+    await saveData('walnut-flashcards', updatedFlashcards);
   };
 
   const handleSelectNote = (noteId: string) => {

@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld(
   'electron',
   {
     appInfo: {
-      name: 'Apricot',
+      name: 'Walnut',
       version: process.env.npm_package_version || '1.0.0',
     },
     // Expose platform info

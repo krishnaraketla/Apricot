@@ -40,6 +40,18 @@
   transition: all 0.3s ease;
 }
 
+.app-name {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar.collapsed .app-name {
+  max-width: 1.5rem;
+  overflow: hidden;
+}
+
 .sidebar-toggle {
   background: transparent;
   border: none;

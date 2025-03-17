@@ -5,7 +5,7 @@ import ElectronBridge from '../utils/electronBridge';
 export const useElectron = () => {
   const [isElectron, setIsElectron] = useState<boolean>(false);
   const [platform, setPlatform] = useState<string>('web');
-  const [appInfo, setAppInfo] = useState<{name: string, version: string}>({ name: 'Apricot', version: '1.0.0' });
+  const [appInfo, setAppInfo] = useState<{name: string, version: string}>({ name: 'Walnut', version: '1.0.0' });
 
   // Initialize on component mount
   useEffect(() => {

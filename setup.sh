@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Apricot setup script
-echo "Setting up Apricot development environment..."
+# Walnut setup script
+echo "Setting up Walnut development environment..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then

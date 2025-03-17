@@ -59,7 +59,7 @@ export class ElectronBridge {
   static getAppInfo(): { name: string; version: string } {
     return (
       window.electron?.appInfo || {
-        name: 'Apricot',
+        name: 'Walnut',
         version: '1.0.0',
       }
     );
