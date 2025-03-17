@@ -11,6 +11,21 @@
   text-align: center;
   padding: 2rem 1rem;
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.walnut-logo {
+  margin-bottom: 1.5rem;
+}
+
+.walnut-logo svg {
+  transition: transform 0.3s ease;
+}
+
+.walnut-logo svg:hover {
+  transform: scale(1.05);
 }
 
 .app-title h1 {
