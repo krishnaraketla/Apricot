@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useTransition, useRef } from 'react';
-import NoteEditor from '../components/NoteEditor';
+import NoteEditor, { getPlainTextFromSlate } from '../components/NoteEditor';
 import PerplexityService from '../services/PerplexityService';
 import useElectron from '../hooks/useElectron';
 import useScrollContainment from '../hooks/useScrollContainment';
@@ -161,6 +161,17 @@ const NotesPage: React.FC = () => {
     });
   }, []);
 
+  const formatNotePreview = (content: string): string => {
+    try {
+      // Try to parse as JSON (for Slate format)
+      const parsed = JSON.parse(content);
+      return getPlainTextFromSlate(parsed);
+    } catch (e) {
+      // If it's not valid JSON, return as is (legacy plain text format)
+      return content;
+    }
+  };
+
   // Only focus on first note when notes list first loads, not on every selection change
   useEffect(() => {
     if (notes.length > 0 && !selectedNote) {
@@ -212,7 +223,7 @@ const NotesPage: React.FC = () => {
                       {note.title || 'Untitled Note'}
                     </h3>
                     <p className="note-item-preview">
-                      {note.content?.substring(0, 100) || 'No content'}
+                      {formatNotePreview(note.content)?.substring(0, 100) || 'No content'}
                     </p>
                     <span className="note-item-date">{formatDate(new Date(note.updatedAt))}</span>
                   </div>

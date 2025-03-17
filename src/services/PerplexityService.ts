@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getPlainTextFromSlate } from '../components/NoteEditor';
 
 // This would come from an environment variable in a real app
 const API_KEY = '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';
@@ -14,6 +15,18 @@ interface QuizQuestion {
   correctAnswer: number;
 }
 
+// Helper function to extract plain text from note content (which might be JSON)
+const getPlainTextContent = (content: string): string => {
+  try {
+    // Try to parse as JSON (for Slate format)
+    const parsed = JSON.parse(content);
+    return getPlainTextFromSlate(parsed);
+  } catch (e) {
+    // If it's not valid JSON, return as is (legacy plain text format)
+    return content;
+  }
+};
+
 class PerplexityService {
   private readonly apiUrl = 'https://api.perplexity.ai/chat/completions';
   private readonly headers = {
@@ -26,6 +39,9 @@ class PerplexityService {
    */
   async generateFlashcards(noteContent: string): Promise<FlashCard[]> {
     try {
+      // Convert Slate document to plain text if needed
+      const plainTextContent = getPlainTextContent(noteContent);
+      
       const response = await axios.post(
         this.apiUrl,
         {
@@ -37,7 +53,7 @@ class PerplexityService {
             },
             {
               role: "user",
-              content: `Generate 5 flashcards from the following note: ${noteContent}`
+              content: `Generate 5 flashcards from the following note: ${plainTextContent}`
             }
           ]
         },
@@ -92,6 +108,9 @@ class PerplexityService {
    */
   async generateQuiz(noteContent: string): Promise<QuizQuestion[]> {
     try {
+      // Convert Slate document to plain text if needed
+      const plainTextContent = getPlainTextContent(noteContent);
+      
       const response = await axios.post(
         this.apiUrl,
         {
@@ -103,7 +122,7 @@ class PerplexityService {
             },
             {
               role: "user",
-              content: `Generate 5 multiple-choice quiz questions with 4 options each from these notes: ${noteContent}. Return them in a JSON array of objects with fields: question, options (array of strings), and correctAnswer (0-indexed number). Only return valid JSON, nothing else.`
+              content: `Generate 5 multiple-choice quiz questions with 4 options each from these notes: ${plainTextContent}. Return them in a JSON array of objects with fields: question, options (array of strings), and correctAnswer (0-indexed number). Only return valid JSON, nothing else.`
             }
           ]
         },
