@@ -36,7 +36,7 @@
   padding-right: 1rem;
 }
 
-.sidebar-header {
+.notes-sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -45,13 +45,13 @@
   border-bottom: 1px solid var(--bg-dark);
 }
 
-.sidebar-header h2 {
+.notes-sidebar-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: var(--text-dark);
 }
 
-.new-note-btn {
+.add-note-btn {
   padding: 0.5rem 1rem;
   background-color: var(--color-primary);
   border: none;
@@ -61,7 +61,7 @@
   transition: background-color 0.2s;
 }
 
-.new-note-btn:hover {
+.add-note-btn:hover {
   background-color: var(--color-primary-light);
 }
 
@@ -96,7 +96,7 @@
   pointer-events: none;
 }
 
-.note-item-content {
+.note-item-details {
   flex: 1;
   overflow: hidden;
 }
@@ -162,30 +162,4 @@
 .empty-notes-message p,
 .empty-editor-message p {
   max-width: 300px;
-}
-
-.notes-actions {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.organize-btn {
-  background-color: var(--color-secondary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.organize-btn:hover:not(:disabled) {
-  background-color: var(--color-secondary-light);
-}
-
-.organize-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 } 

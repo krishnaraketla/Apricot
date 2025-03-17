@@ -1,0 +1,30 @@
+.page-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.page-content {
+  flex: 1;
+  margin-left: 220px;
+  padding: 1.5rem 2rem;
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.page-layout.sidebar-collapsed .page-content {
+  margin-left: 60px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .page-content {
+    margin-left: 60px;
+    padding: 1.5rem;
+  }
+  
+  .page-layout.sidebar-collapsed .page-content {
+    margin-left: 0;
+  }
+} 

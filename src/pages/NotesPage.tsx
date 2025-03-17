@@ -15,7 +15,6 @@ interface Note {
 const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-  const [isOrganizing, setIsOrganizing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
   const { saveData, loadData } = useElectron();
@@ -102,32 +101,7 @@ const NotesPage: React.FC = () => {
     }
   }, [notes, selectedNote, saveData]);
 
-  const handleSelectNote = useCallback((note: Note) => {
-    console.log('Attempting to select note:', note.id, note.title);
-    
-    // Find the latest version of the note from the notes array
-    const currentNote = notes.find(n => n.id === note.id);
-    if (!currentNote || (selectedNote?.id === currentNote.id)) {
-      console.log('Note already selected or not found, skipping');
-      return;
-    }
-    
-    // Use React transitions for smoother UI updates
-    startTransition(() => {
-      // Create a new object to ensure React recognizes the change
-      const selectedNoteWithDates = {
-        ...currentNote,
-        createdAt: new Date(currentNote.createdAt),
-        updatedAt: new Date(currentNote.updatedAt)
-      };
-      
-      // Directly set the new selected note
-      setSelectedNote(selectedNoteWithDates);
-    });
-  }, [notes, selectedNote, startTransition]);
-
-  const handleCreateNewNote = useCallback(async () => {
-    console.log('Creating new note');
+  const handleAddNote = useCallback(() => {
     const newNote: Note = {
       id: Date.now().toString(),
       title: 'Untitled Note',
@@ -136,13 +110,16 @@ const NotesPage: React.FC = () => {
       updatedAt: new Date()
     };
     
-    // Optimistic update - add new note to the beginning of the array since it's the newest
-    setNotes(prev => [newNote, ...prev]);
+    const newNotes = [newNote, ...notes];
+    setNotes(newNotes);
     setSelectedNote(newNote);
-    
-    // Save after state update
-    await saveData('apricot-notes', [newNote, ...notes]);
+    saveData('apricot-notes', newNotes);
   }, [notes, saveData]);
+
+  const handleNoteSelect = useCallback((note: Note) => {
+    console.log('Note selected:', note.id, note.title);
+    setSelectedNote(note);
+  }, []);
 
   const handleDeleteNote = useCallback(async (id: string) => {
     const updatedNotes = notes.filter(note => note.id !== id);
@@ -156,33 +133,12 @@ const NotesPage: React.FC = () => {
     await saveData('apricot-notes', updatedNotes);
   }, [notes, selectedNote, saveData]);
 
-  const handleOrganizeContent = useCallback(async () => {
+  const handleCreateFlashcards = useCallback(async () => {
     if (!selectedNote) return;
     
-    setIsOrganizing(true);
-    
-    try {
-      const organizedContent = await PerplexityService.organizeContent(selectedNote.content);
-      
-      const updatedNote = {
-        ...selectedNote,
-        content: organizedContent,
-        updatedAt: new Date()
-      };
-      
-      const updatedNotes = notes.map(note => 
-        note.id === selectedNote.id ? updatedNote : note
-      );
-      
-      setNotes(updatedNotes);
-      setSelectedNote(updatedNote);
-      await saveData('apricot-notes', updatedNotes);
-    } catch (error) {
-      console.error('Error organizing content:', error);
-    } finally {
-      setIsOrganizing(false);
-    }
-  }, [notes, selectedNote, saveData]);
+    // Navigate to the flashcards page with the selected note's ID
+    window.location.href = `/flashcards?noteId=${selectedNote.id}`;
+  }, [selectedNote]);
 
   const formatDate = useCallback((date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -212,11 +168,11 @@ const NotesPage: React.FC = () => {
   return (
     <div className="notes-page">
       <div className="notes-sidebar">
-        <div className="sidebar-header">
-          <h2>Your Notes</h2>
+        <div className="notes-sidebar-header">
+          <h2>Notes</h2>
           <button 
-            className="new-note-btn" 
-            onClick={handleCreateNewNote}
+            className="add-note-btn"
+            onClick={handleAddNote}
           >
             + New Note
           </button>
@@ -224,28 +180,26 @@ const NotesPage: React.FC = () => {
         <div className="notes-list">
           {notes.length === 0 ? (
             <div className="empty-notes-message">
-              <p>You don't have any notes yet. Create your first note to get started!</p>
+              <p>You don't have any notes yet. Create one to get started!</p>
             </div>
           ) : (
             notes.map((note, index) => {
               const isSelected = selectedNote && selectedNote.id === note.id;
+              
               return (
-                <div 
+                <div
                   key={note.id}
                   ref={index === 0 ? latestNoteRef : null}
-                  className={`note-item ${isSelected ? 'selected' : ''} ${isPending ? 'pending' : ''}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Note item clicked:', note.id, note.title);
-                    handleSelectNote(note);
-                  }}
+                  className={`note-item ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handleNoteSelect(note)}
                   tabIndex={0}
                 >
-                  <div className="note-item-content">
-                    <h3 className="note-item-title">{note.title}</h3>
+                  <div className="note-item-details">
+                    <h3 className="note-item-title">
+                      {note.title || 'Untitled Note'}
+                    </h3>
                     <p className="note-item-preview">
-                      {note.content.substring(0, 60)}{note.content.length > 60 ? '...' : ''}
+                      {note.content?.substring(0, 100) || 'No content'}
                     </p>
                     <span className="note-item-date">{formatDate(new Date(note.updatedAt))}</span>
                   </div>
@@ -268,23 +222,13 @@ const NotesPage: React.FC = () => {
       
       <div className="notes-editor-container">
         {selectedNote ? (
-          <>
-            <NoteEditor 
-              key={selectedNote.id}
-              initialContent={selectedNote.content}
-              initialTitle={selectedNote.title}
-              onSave={handleSaveNote}
-            />
-            <div className="notes-actions">
-              <button 
-                className="organize-btn"
-                onClick={handleOrganizeContent}
-                disabled={isOrganizing || !selectedNote.content}
-              >
-                {isOrganizing ? 'Organizing...' : 'Organize Content'}
-              </button>
-            </div>
-          </>
+          <NoteEditor 
+            key={selectedNote.id}
+            initialContent={selectedNote.content}
+            initialTitle={selectedNote.title}
+            onSave={handleSaveNote}
+            onCreateFlashcards={handleCreateFlashcards}
+          />
         ) : (
           <div className="empty-editor-message">
             <p>Select a note from the sidebar or create a new one to get started!</p>

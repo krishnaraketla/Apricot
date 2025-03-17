@@ -1,21 +1,25 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import '../styles/components/NoteEditor.css';
 
 interface NoteEditorProps {
   initialContent?: string;
   initialTitle?: string;
   onSave: (content: string, title: string) => void;
+  onCreateFlashcards?: () => void;
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ 
   initialContent = '', 
   initialTitle = 'Untitled Note',
-  onSave 
+  onSave,
+  onCreateFlashcards
 }) => {
   // Use state initialization with useMemo to ensure props are captured at mount time
   const [content, setContent] = useState<string>(() => initialContent);
   const [title, setTitle] = useState<string>(() => initialTitle);
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Track component instance with an instance ID for debugging
   const instanceId = useMemo(() => Math.random().toString(36).substring(2, 9), []);
@@ -33,6 +37,20 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       }
     };
   }, [instanceId, initialContent, initialTitle, saveTimeout]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // This effect will run when initialContent changes
   useEffect(() => {
@@ -80,6 +98,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
     e.preventDefault();
   }, [autoSave, content, title]);
 
+  const toggleDropdown = useCallback(() => {
+    setShowDropdown(prev => !prev);
+  }, []);
+
   return (
     <div className="note-editor">
       <div className="note-editor-header">
@@ -90,6 +112,30 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
           onChange={handleTitleChange}
           placeholder="Note Title"
         />
+        <div className="dropdown-container" ref={dropdownRef}>
+          <button 
+            className="dropdown-btn"
+            onClick={toggleDropdown}
+            title="Options"
+          >
+            <span className="ellipsis">•••</span>
+          </button>
+          {showDropdown && (
+            <div className="dropdown-menu">
+              {onCreateFlashcards && (
+                <button 
+                  className="dropdown-item"
+                  onClick={() => {
+                    onCreateFlashcards();
+                    setShowDropdown(false);
+                  }}
+                >
+                  Create Flashcards
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <textarea 
         className="note-content-area"
@@ -98,17 +144,6 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
         onPaste={handlePaste}
         placeholder="Start typing or paste your notes here..."
       />
-      <div className="note-editor-tools">
-        <button className="tool-btn" title="Create Flashcards">
-          Create Flashcards
-        </button>
-        <button className="tool-btn" title="Generate Quiz">
-          Generate Quiz
-        </button>
-        <button className="tool-btn" title="Organize Content">
-          Organize Content
-        </button>
-      </div>
     </div>
   );
 };

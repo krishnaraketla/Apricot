@@ -99,67 +99,47 @@ class PerplexityService {
           messages: [
             {
               role: "system",
-              content: "You are a helpful assistant that generates quiz questions for studying. Format your response as a JSON array of objects with 'question', 'options' (array of strings), and 'correctAnswer' (index of correct option) properties."
+              content: "You are a helpful assistant that creates quiz questions from study notes."
             },
             {
               role: "user",
-              content: `Generate 5 multiple-choice quiz questions from the following note: ${noteContent}`
+              content: `Generate 5 multiple-choice quiz questions with 4 options each from these notes: ${noteContent}. Return them in a JSON array of objects with fields: question, options (array of strings), and correctAnswer (0-indexed number). Only return valid JSON, nothing else.`
             }
           ]
         },
         { headers: this.headers }
       );
 
-      const content = response.data.choices[0].message.content;
+      // Extract the JSON string from the response
+      const content = response.data.choices[0].message.content.trim();
+      let quizQuestions: QuizQuestion[] = [];
       
-      // Extract JSON from the response
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || 
-                        content.match(/\[([\s\S]*?)\]/) ||
-                        content;
-      
-      let quizQuestions: QuizQuestion[];
-      
-      if (jsonMatch && jsonMatch[1]) {
-        quizQuestions = JSON.parse(jsonMatch[1] || jsonMatch);
-      } else {
-        // Fallback if no JSON detected
+      // Try to parse the JSON directly
+      try {
         quizQuestions = JSON.parse(content);
+        return quizQuestions;
+      } catch (parseError) {
+        console.log('Direct JSON parse failed:', parseError);
+        
+        // Try to extract JSON if surrounded by markdown code blocks or backticks
+        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```|`([\s\S]*?)`/);
+        if (jsonMatch) {
+          try {
+            const jsonStr = (jsonMatch[1] || jsonMatch[2]).trim();
+            quizQuestions = JSON.parse(jsonStr);
+            return quizQuestions;
+          } catch (markdownParseError) {
+            console.log('Markdown JSON extraction failed:', markdownParseError);
+          }
+        }
       }
       
-      return quizQuestions;
+      // As a last resort, try to manually extract the JSON
+      console.error('Failed to parse quiz questions from API response');
+      return [];
     } catch (error) {
       console.error('Error generating quiz:', error);
       return [];
-    }
-  }
-
-  /**
-   * Organize note content into structured format
-   */
-  async organizeContent(noteContent: string): Promise<string> {
-    try {
-      const response = await axios.post(
-        this.apiUrl,
-        {
-          model: "sonar",
-          messages: [
-            {
-              role: "system",
-              content: "You are a helpful assistant that organizes study notes into clear, structured formats with headings, subheadings, and bullet points."
-            },
-            {
-              role: "user",
-              content: `Organize the following study notes into a clear, structured format: ${noteContent}`
-            }
-          ]
-        },
-        { headers: this.headers }
-      );
-
-      return response.data.choices[0].message.content;
-    } catch (error) {
-      console.error('Error organizing content:', error);
-      return noteContent;
     }
   }
 }
